@@ -1,0 +1,26 @@
+\contentsline {title}{PIRE-GEMADARC Internal Notes – Germanium Internal Amplification (GeIA):\\}{1}{}
+\contentsline {abstract}{Abstract}{1}{}
+\tocdepth@munge 
+\contentsline {section}{\numberline {}Contents}{1}{}
+\tocdepth@restore 
+\contentsline {section}{\numberline {I}Introduction}{1}{}
+\contentsline {section}{\numberline {II}Basic p-n junction}{2}{}
+\contentsline {section}{\numberline {III}Signal Amplification}{2}{}
+\contentsline {subsection}{\numberline {A}Necessary Parameters from "an electron":}{2}{}
+\contentsline {subsubsection}{\numberline {1}$\text {Electrical Mobility($\mu $)}$}{2}{}
+\contentsline {subsubsection}{\numberline {2}Effective mass(m*)}{2}{}
+\contentsline {subsubsection}{\numberline {3}Relaxation Time($\tau $)}{3}{}
+\contentsline {subsection}{\numberline {B}Real beef: Ionization rate}{3}{}
+\contentsline {subsection}{\numberline {C}Pioneer: Russian investigation[2000]}{3}{}
+\contentsline {section}{\numberline {IV}Noise in the Crystal}{4}{}
+\contentsline {subsection}{\numberline {A}Bulk leakage current}{4}{}
+\contentsline {subsection}{\numberline {B}Contact leakage current}{5}{}
+\contentsline {subsection}{\numberline {C}Surface leakage current}{5}{}
+\contentsline {subsection}{\numberline {D}Summary for three currents}{6}{}
+\contentsline {section}{\numberline {V}Performance for the Detector}{6}{}
+\contentsline {subsection}{\numberline {A}Gain}{6}{}
+\contentsline {subsection}{\numberline {B}Electrical Breakdown}{7}{}
+\contentsline {section}{\numberline {VI}Conclusion and Dilemma}{8}{}
+\contentsline {section}{\numberline {VII}To Be Continued....}{8}{}
+\contentsline {section}{\numberline {VIII}Acknowledgement}{8}{}
+\contentsline {section}{\numberline {}References}{8}{}
