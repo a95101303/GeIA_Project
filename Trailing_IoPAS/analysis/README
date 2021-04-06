@@ -1,0 +1,10 @@
+max_60m[0]   Channel corresponds to Energy to be calibrated
+
+
+First need to remove noisy events via Offset_Cut.C
+
+Later make Histogram with cuts implimented (manual_fit.C)
+
+and calibrate using fitting_prog.C
+
+make final histogram with final_spec.C

@@ -1,0 +1,431 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "math.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TBrowser.h"
+#include "TF1.h"
+#include "TH1F.h"
+#include "TH2.h"
+#include "TCanvas.h"
+#include "TGraph.h"
+#include "TObjectTable.h"
+#include <fftw3.h>
+
+#include "read_rawdata_L114_file.h"
+#include "ntuple_variables_def_L114.h"
+int main(int argc,char *argv[])
+{
+  time_t runtime0, runtime;
+  Int_t init_run;
+  Int_t final_run;
+  Char_t FileName[250];
+  Char_t Misc[200];
+  
+  
+  strcpy(FileName, "run");
+  init_run = 0;
+  final_run = 0;
+  strcpy(Misc, " ");
+  
+  if (argc>1) { strcpy(FileName, argv[1]); }
+  if (argc>2) { init_run=atoi(argv[2]); }
+  if (argc>3) { final_run=atoi(argv[3]); }
+  
+
+  char desc[100];
+  char name[100],filedate[100];
+  
+  char base_name[200] = "No_Name";
+ 
+  //set the tree filename
+  get_name(base_name,FileName);
+  get_date(filedate,FileName);
+  sprintf(name,"%s_%d_%d.root",base_name,init_run, final_run);
+  sprintf(desc,"%s %d %d",base_name, init_run, final_run);
+  
+  printf("\n");
+  printf("#################################################\n");
+  printf("Input : %s\n", FileName);
+  printf("Run : %d to %d\n",init_run, final_run );
+  printf("Output : %s\n", name);
+  printf("#################################################\n");
+  printf("\n\n");
+  
+  //open the file
+  TFile f(name,"recreate");
+  
+  //open the tree, and define the tree branch
+  TTree t1("tr",desc);
+  
+  FILE *raw;
+  ULong64_t event_start_time_temp1,event_start_time_temp2,event_start_time_temp3;
+  //ULong64_t veto_tdc_temp[32],former_veto_tdc_temp[32];
+  //ULong64_t late_former_veto_tdc_temp[32],late_former_veto_tdc2_temp[32];
+  //ULong64_t veto_tdc_or_temp[13],former_veto_tdc_or_temp[13];
+  ////ULong64_t late_former_veto_tdc_or_temp[13],late_former_veto_tdc2_or_temp[13];
+  //ULong64_t veto_tdc_inner_temp[4];
+  ULong64_t signal_inhibit_time_temp[8],event_end_time_temp;
+  
+  Int_t pulser_on_off,ge_on_off,random_trig_on_off;
+  
+  Char_t filepath[200],temp_str[200];
+  UInt_t temp_idevt=0;
+  //ULong64_t last_RT_time=0,RT_TI;
+  // ULong64_t last_event_time=0,event_TI=0;
+  //Short_t MINs_temp[24];
+  
+  
+  // System Variables
+  t1.Branch("idevt",&temp_idevt,"idevt/I");
+  t1.Branch("event_start_time1",&event_start_time_temp1,"event_start_time1/l");
+  t1.Branch("event_start_time2",&event_start_time_temp2,"event_start_time2/l");
+  t1.Branch("event_start_time3",&event_start_time_temp3,"event_start_time3/l");
+  t1.Branch("event_end_time",&event_end_time_temp,"event_end_time/l");
+  /*
+  t1.Branch("veto_tdc",&veto_tdc_temp[0],"veto_tdc[32]/l");
+  t1.Branch("former_veto_tdc",&former_veto_tdc_temp[0],"former_veto_tdc[32]/l");
+  t1.Branch("late_former_veto_tdc",&late_former_veto_tdc_temp[0],"late_former_veto_tdc[32]/l");
+  t1.Branch("late_former_veto_tdc2",&late_former_veto_tdc2_temp[0],"late_former_veto_tdc2[32]/l");
+  t1.Branch("veto_tdc_or",&veto_tdc_or_temp[0],"veto_tdc_or[13]/l");
+  t1.Branch("former_veto_tdc_or",&former_veto_tdc_or_temp[0],"former_veto_tdc_or[13]/l");
+  t1.Branch("late_former_veto_tdc_or",&late_former_veto_tdc_or_temp[0],"late_former_veto_tdc_or[13]/l");
+  t1.Branch("late_former_veto_tdc2_or",&late_former_veto_tdc2_or_temp[0],"late_former_veto_tdc2_or[13]/l");
+  */
+  t1.Branch("signal_inhibit_time",&signal_inhibit_time_temp[0],"signal_inhibit_time[8]/l");  
+  t1.Branch("pulser_on_off",&pulser_on_off,"pulser_on_off/I");
+  t1.Branch("ge_on_off",&ge_on_off,"ge_on_off/I");
+  t1.Branch("random_trig_on_off",&random_trig_on_off,"random_trig_on_off/I");
+  
+  /*
+  t1.Branch("nai1_on_off",&eheader.nai_1_on_off,"NaI1_trig_on_off/I");
+  t1.Branch("nai2_on_off",&eheader.nai_2_on_off,"NaI2_trig_on_off/I");
+  t1.Branch("nai3_on_off",&eheader.nai_3_on_off,"NaI3_trig_on_off/I");
+  t1.Branch("nai5_on_off",&eheader.nai_5_on_off,"NaI5_trig_on_off/I");
+
+  t1.Branch("RT_TI",&RT_TI,"RT_TI/l");
+  t1.Branch("event_TI",&event_TI,"event_TI/l");
+  t1.Branch("mins",&MINs_temp[0],"mins[24]/S");
+  t1.Branch("veto_tdc_inner",&veto_tdc_inner_temp[0],"veto_tdc_inner[4]/l");
+  */
+  
+ 
+   //60M FADC variables
+  sprintf(temp_str,"q_60m[%d]/D",OPEN_CHANNEL_60M);  
+  t1.Branch("q_60m",ebody.q_60m,temp_str);
+  sprintf(temp_str,"max_60m[%d]/I",OPEN_CHANNEL_60M); 
+  t1.Branch("max_60m",ebody.max_60m,temp_str);
+  sprintf(temp_str,"max_time_bin_60m[%d]/I",OPEN_CHANNEL_60M);  
+  t1.Branch("max_time_bin_60m",ebody.max_time_bin_60m,temp_str);
+  sprintf(temp_str,"omax_60m[%d]/I",OPEN_CHANNEL_60M); 
+  t1.Branch("omax_60m",ebody.omax_60m,temp_str);
+  sprintf(temp_str,"omax_time_bin_60m[%d]/I",OPEN_CHANNEL_60M);  
+  t1.Branch("omax_time_bin_60m",ebody.omax_time_bin_60m,temp_str);
+  sprintf(temp_str,"tmax_60m[%d]/I",OPEN_CHANNEL_60M);  
+  t1.Branch("tmax_60m",ebody.tmax_60m,temp_str);
+  sprintf(temp_str,"tmax_time_bin_60m[%d]/I",OPEN_CHANNEL_60M); 
+  t1.Branch("tmax_time_bin_60m",ebody.tmax_time_bin_60m,temp_str);
+  sprintf(temp_str,"min_60m[%d]/I",OPEN_CHANNEL_60M); 
+  t1.Branch("min_60m",ebody.min_60m,temp_str);
+  sprintf(temp_str,"min_time_bin_60m[%d]/I",OPEN_CHANNEL_60M); 
+  t1.Branch("min_time_bin_60m",ebody.min_time_bin_60m,temp_str);
+  sprintf(temp_str,"ped_60m[%d]/F",OPEN_CHANNEL_60M);  
+  t1.Branch("ped_60m",ebody.ped_60m,temp_str);
+  sprintf(temp_str,"pedt_60m[%d]/F",OPEN_CHANNEL_60M);  
+  t1.Branch("pedt_60m",ebody.pedt_60m,temp_str);
+  sprintf(temp_str,"before_pq_60m[%d]/D",OPEN_CHANNEL_60M); 
+  t1.Branch("before_pq_60m",ebody.before_pq_60m,temp_str);
+  sprintf(temp_str,"after_pq_60m[%d]/D",OPEN_CHANNEL_60M); 
+  t1.Branch("after_pq_60m",ebody.after_pq_60m,temp_str);
+  sprintf(temp_str,"optq_60m[%d]/D",OPEN_CHANNEL_60M);
+  t1.Branch("optq_60m",ebody.optq_60m,temp_str);
+  sprintf(temp_str,"q2_60m[%d]/D",OPEN_CHANNEL_60M);  
+  t1.Branch("q2_60m",ebody.q2_60m,temp_str);
+  sprintf(temp_str,"t0_60m[%d]/D",OPEN_CHANNEL_60M);  
+  t1.Branch("t0_60m",ebody.t0_60m,temp_str);
+  sprintf(temp_str,"T2_60m[%d]/D",OPEN_CHANNEL_60M);  
+  t1.Branch("T2_60m",ebody.T2_60m,temp_str);
+
+  /*
+  // 20M-1 FADC variables
+  sprintf(temp_str,"q_20m1[%d]/D",OPEN_CHANNEL_20M1); 
+  t1.Branch("q_20m1",ebody.q_20m1,temp_str);
+  sprintf(temp_str,"ped_20m1[%d]/F",OPEN_CHANNEL_20M1); 
+  t1.Branch("ped_20m1",ebody.ped_20m1,temp_str); 
+  sprintf(temp_str,"pedt_20m1[%d]/F",OPEN_CHANNEL_20M1);
+  t1.Branch("pedt_20m1",ebody.pedt_20m1,temp_str);
+  sprintf(temp_str,"max_20m1[%d]/I",OPEN_CHANNEL_20M1);
+  t1.Branch("max_20m1",ebody.max_20m1,temp_str);
+  sprintf(temp_str,"min_20m1[%d]/I",OPEN_CHANNEL_20M1); 
+  t1.Branch("min_20m1",ebody.min_20m1,temp_str);
+  sprintf(temp_str,"max_time_bin_20m1[%d]/I",OPEN_CHANNEL_20M1);  
+  t1.Branch("max_time_bin_20m1",ebody.max_time_bin_20m1,temp_str);
+  sprintf(temp_str,"min_time_bin_20m1[%d]/I",OPEN_CHANNEL_20M1);  
+  t1.Branch("min_time_bin_20m1",ebody.min_time_bin_20m1,temp_str);
+  sprintf(temp_str,"max_timebin_t1_20m1[%d]/I",OPEN_CHANNEL_20M1);  
+  t1.Branch("max_timebin_t1_20m1",ebody.max_timebin_t1_20m1,temp_str);
+  sprintf(temp_str,"max_timebin_t2_20m1[%d]/I",OPEN_CHANNEL_20M1);  
+  t1.Branch("max_timebin_t2_20m1",ebody.max_timebin_t2_20m1,temp_str);
+  sprintf(temp_str,"max_timebin_t3_20m1[%d]/I",OPEN_CHANNEL_20M1);  
+  t1.Branch("max_timebin_t3_20m1",ebody.max_timebin_t3_20m1,temp_str);
+  
+
+
+  // 20M-2 FADC variables
+  sprintf(temp_str,"q_20m2[%d]/D",OPEN_CHANNEL_20M2); 
+  t1.Branch("q_20m2",ebody.q_20m2,temp_str);
+  sprintf(temp_str,"ped_20m2[%d]/F",OPEN_CHANNEL_20M2); 
+  t1.Branch("ped_20m2",ebody.ped_20m2,temp_str); 
+  sprintf(temp_str,"pedt_20m2[%d]/F",OPEN_CHANNEL_20M2);
+  t1.Branch("pedt_20m2",ebody.pedt_20m2,temp_str);
+  sprintf(temp_str,"max_20m2[%d]/I",OPEN_CHANNEL_20M2);
+  t1.Branch("max_20m2",ebody.max_20m2,temp_str);
+  sprintf(temp_str,"min_20m2[%d]/I",OPEN_CHANNEL_20M2); 
+  t1.Branch("min_20m2",ebody.min_20m2,temp_str);
+  sprintf(temp_str,"max_time_bin_20m2[%d]/I",OPEN_CHANNEL_20M2);  
+  t1.Branch("max_time_bin_20m2",ebody.max_time_bin_20m2,temp_str);
+  sprintf(temp_str,"min_time_bin_20m2[%d]/I",OPEN_CHANNEL_20M2);  
+  t1.Branch("min_time_bin_20m2",ebody.min_time_bin_20m2,temp_str);
+  sprintf(temp_str,"max_timebin_t1_20m2[%d]/I",OPEN_CHANNEL_20M2);  
+  t1.Branch("max_timebin_t1_20m2",ebody.max_timebin_t1_20m2,temp_str);
+  sprintf(temp_str,"max_timebin_t2_20m2[%d]/I",OPEN_CHANNEL_20M2);  
+  t1.Branch("max_timebin_t2_20m2",ebody.max_timebin_t2_20m2,temp_str);
+  sprintf(temp_str,"max_timebin_t3_20m2[%d]/I",OPEN_CHANNEL_20M2);  
+  t1.Branch("max_timebin_t3_20m2",ebody.max_timebin_t3_20m2,temp_str);
+  */
+
+
+
+  //200M-1-FADC-relevent variables 
+  sprintf(temp_str,"q_200m1[%d]/D",OPEN_CHANNEL_200M1); 
+  t1.Branch("q_200m1",ebody.q_200m1,temp_str);
+  sprintf(temp_str,"ped_200m1[%d]/F",OPEN_CHANNEL_200M1); 
+  t1.Branch("ped_200m1",ebody.ped_200m1,temp_str); 
+  sprintf(temp_str,"pedt_200m1[%d]/F",OPEN_CHANNEL_200M1);
+  t1.Branch("pedt_200m1",ebody.pedt_200m1,temp_str);
+  sprintf(temp_str,"max_200m1[%d]/I",OPEN_CHANNEL_200M1); 
+  t1.Branch("max_200m1",ebody.max_200m1,temp_str);
+  sprintf(temp_str,"min_200m1[%d]/I",OPEN_CHANNEL_200M1); 
+  t1.Branch("min_200m1",ebody.min_200m1,temp_str);
+  sprintf(temp_str,"max_time_bin_200m1[%d]/I",OPEN_CHANNEL_200M1);  
+  t1.Branch("max_time_bin_200m1",ebody.max_time_bin_200m1,temp_str);
+  sprintf(temp_str,"min_time_bin_200m1[%d]/I",OPEN_CHANNEL_200M1);  
+  t1.Branch("min_time_bin_200m1",ebody.min_time_bin_200m1,temp_str);
+  sprintf(temp_str,"q2_200m1[%d]/D",OPEN_CHANNEL_200M1);  
+  t1.Branch("q2_200m1",ebody.q2_200m1,temp_str);
+  sprintf(temp_str,"t0_200m1[%d]/D",OPEN_CHANNEL_200M1);  
+  t1.Branch("t0_200m1",ebody.t0_200m1,temp_str);
+  sprintf(temp_str,"T2_200m1[%d]/D",OPEN_CHANNEL_200M1);  
+  t1.Branch("T2_200m1",ebody.T2_200m1,temp_str); 
+
+
+  //200M-2-FADC-relevent variables 
+  sprintf(temp_str,"q_200m2[%d]/D",OPEN_CHANNEL_200M2); 
+  t1.Branch("q_200m2",ebody.q_200m2,temp_str);
+  sprintf(temp_str,"ped_200m2[%d]/F",OPEN_CHANNEL_200M2); 
+  t1.Branch("ped_200m2",ebody.ped_200m2,temp_str); 
+  sprintf(temp_str,"pedt_200m2[%d]/F",OPEN_CHANNEL_200M2);
+  t1.Branch("pedt_200m2",ebody.pedt_200m2,temp_str);
+  sprintf(temp_str,"max_200m2[%d]/I",OPEN_CHANNEL_200M2); 
+  t1.Branch("max_200m2",ebody.max_200m2,temp_str);
+  sprintf(temp_str,"min_200m2[%d]/I",OPEN_CHANNEL_200M2); 
+  t1.Branch("min_200m2",ebody.min_200m2,temp_str);
+  sprintf(temp_str,"max_time_bin_200m2[%d]/I",OPEN_CHANNEL_200M2);  
+  t1.Branch("max_time_bin_200m2",ebody.max_time_bin_200m2,temp_str);
+  sprintf(temp_str,"min_time_bin_200m2[%d]/I",OPEN_CHANNEL_200M2);  
+  t1.Branch("min_time_bin_200m2",ebody.min_time_bin_200m2,temp_str);
+  sprintf(temp_str,"q2_200m2[%d]/D",OPEN_CHANNEL_200M2);  
+  t1.Branch("q2_200m2",ebody.q2_200m2,temp_str);
+  sprintf(temp_str,"t0_200m2[%d]/D",OPEN_CHANNEL_200M2);  
+  t1.Branch("t0_200m2",ebody.t0_200m2,temp_str);
+  sprintf(temp_str,"T2_200m2[%d]/D",OPEN_CHANNEL_200M2);  
+  t1.Branch("T2_200m2",ebody.T2_200m2,temp_str); 
+
+  t1.Branch("chi2_200m",&ebody.chi2_200m,"chi2_200m/F");
+  t1.Branch("famp_200m",&ebody.famp_200m,"famp_200m/F");
+  t1.Branch("er_famp_200m",&ebody.er_famp_200m,"er_famp_200m/F");
+  t1.Branch("fped_200m",&ebody.fped_200m,"fped_200m/F");
+  t1.Branch("er_fped_200m",&ebody.er_fped_200m,"er_fped_200m/F");
+  t1.Branch("fcross_200m",&ebody.fcross_200m,"fcross_200m/F");
+  t1.Branch("er_fcross_200m",&ebody.er_fcross_200m,"er_fcross_200m/F");
+  t1.Branch("fslope_200m",&ebody.fslope_200m,"fslope_200m/F"); 
+  t1.Branch("er_fslope_200m",&ebody.er_fslope_200m,"er_fslope_200m/F");
+  t1.Branch("fmid_200m",&ebody.fmid_200m,"fmid_200m/F");
+  
+   /*
+  t1.Branch("trapez_q_200m",&ebody.trapez_q_200m,"trapez_q_200m/D");
+  t1.Branch("trapez_pq_200m",&ebody.trapez_pq_200m,"trapez_pq_200m/D");
+  t1.Branch("trapez_ped_200m",&ebody.trapez_ped_200m,"trapez_ped_200m/F");
+  t1.Branch("trapez_pedt_200m",&ebody.trapez_pedt_200m,"trapez_pedt_200m/F");
+  t1.Branch("trapez_max_200m",&ebody.trapez_max_200m,"trapez_max_200m/F");
+  t1.Branch("trapez_min_200m",&ebody.trapez_min_200m,"trapez_min_200m/F");
+  t1.Branch("trapez_omax_200m",&ebody.trapez_omax_200m,"trapez_omax_200m/F");
+  t1.Branch("trapez_max_time_bin_200m",&ebody.trapez_max_time_bin_200m,"trapez_max_time_bin_200m/I");
+  t1.Branch("trapez_min_time_bin_200m",&ebody.trapez_min_time_bin_200m,"trapez_min_time_bin_200m/I");
+  t1.Branch("trapez_omax_time_bin_200m",&ebody.trapez_omax_time_bin_200m,"trapez_omax_time_bin_200m/I");
+  t1.Branch("trapez_tprime_200m",&ebody.trapez_tprime_200m,"trapez_tprime_200m/D");
+
+  t1.Branch("trapez_rms_200m",&ebody.trapez_rms_200m,"trapez_rms_200m/D");
+  t1.Branch("trapez_local_max_200m",&ebody.trapez_local_max_200m,"trapez_local_max_200m/F");
+  t1.Branch("trapez_local_max_time_bin_200m",&ebody.trapez_local_max_time_bin_200m,"trapez_local_max_time_bin_200m/I");
+  t1.Branch("trapez_local_bfmax_200m",&ebody.trapez_local_bfmax_200m,"trapez_local_bfmax_200m/F");
+  t1.Branch("trapez_local_bfmax_time_bin_200m",&ebody.trapez_local_bfmax_time_bin_200m,"trapez_local_bfmax_time_bin_200m/I");
+  t1.Branch("trapez_local_afmax_200m",&ebody.trapez_local_afmax_200m,"trapez_local_afmax_200m/F");
+  t1.Branch("trapez_local_afmax_time_bin_200m",&ebody.trapez_local_afmax_time_bin_200m,"trapez_local_afmax_time_bin_200m/I");
+   //200M-1-FADC-relevent variables 
+  
+  t1.Branch("fft_W2_60m",&ebody.fft_W2_60m,"fft_W2_60m/F");
+  t1.Branch("fft_q2_60m",&ebody.fft_q2_60m,"fft_q2_60m/F");
+  t1.Branch("fft_max_60m",&ebody.fft_max_60m,"fft_max_60m/F");
+  t1.Branch("fft_max_bin_60m",&ebody.fft_max_bin_60m,"fft_max_bin_60m/F");
+
+  t1.Branch("fft1_W2_60m",&ebody.fft1_W2_60m,"fft1_W2_60m/F");
+  t1.Branch("fft1_q2_60m",&ebody.fft1_q2_60m,"fft1_q2_60m/F");
+  t1.Branch("fft1_max_60m",&ebody.fft1_max_60m,"fft1_max_60m/F");
+  t1.Branch("fft1_max_bin_60m",&ebody.fft1_max_bin_60m,"fft1_max_bin_60m/F");
+
+  t1.Branch("fft100_W2_60m",&ebody.fft100_W2_60m,"fft100_W2_60m/F");
+  t1.Branch("fft100_q2_60m",&ebody.fft100_q2_60m,"fft100_q2_60m/F");
+  t1.Branch("fft100_max_60m",&ebody.fft100_max_60m,"fft100_max_60m/F");
+  t1.Branch("fft100_max_bin_60m",&ebody.fft100_max_bin_60m,"fft100_max_bin_60m/F");
+
+  t1.Branch("fft_W2_200m",&ebody.fft_W2_200m,"fft_W2_200m/F");
+  t1.Branch("fft_q2_200m",&ebody.fft_q2_200m,"fft_q2_200m/F");
+  t1.Branch("fft_max_200m",&ebody.fft_max_200m,"fft_max_200m/F");
+  t1.Branch("fft_max_bin_200m",&ebody.fft_max_bin_200m,"fft_max_bin_200m/F");
+
+  t1.Branch("fft1_W2_200m",&ebody.fft1_W2_200m,"fft1_W2_200m/F");
+  t1.Branch("fft1_q2_200m",&ebody.fft1_q2_200m,"fft1_q2_200m/F");
+  t1.Branch("fft1_max_200m",&ebody.fft1_max_200m,"fft1_max_200m/F");
+  t1.Branch("fft1_max_bin_200m",&ebody.fft1_max_bin_200m,"fft1_max_bin_200m/F");
+
+  t1.Branch("fft100_W2_200m",&ebody.fft100_W2_200m,"fft100_W2_200m/F");
+  t1.Branch("fft100_q2_200m",&ebody.fft100_q2_200m,"fft100_q2_200m/F");
+  t1.Branch("fft100_max_200m",&ebody.fft100_max_200m,"fft100_max_200m/F");
+  t1.Branch("fft100_max_bin_200m",&ebody.fft100_max_bin_200m,"fft100_max_bin_200m/F");
+  */
+  
+
+  for(Int_t run=init_run;run<=final_run;run++)
+    {  
+     
+      runtime0 = time (NULL);
+      sprintf(filepath,"%s_%d.bin",FileName,run);
+      printf("  Open File: %s    \n", filepath);
+      
+      raw=fopen(filepath,"rb");
+      
+      if(filesize(raw)>10000)
+	{
+	  rheader.read_rheader(raw);
+	  for(Int_t block=0;block<10000;block++)
+	    { 
+	      eheader.read_eheader(raw);
+	      eheader.eh_variables(run,init_run,block);
+	      pointerposition=ftell(raw);
+	 
+	      event_start_time_temp1=eheader.event_start_time1;
+	      event_start_time_temp2=eheader.event_start_time2;
+	      event_start_time_temp3=eheader.event_start_time3; 
+	      event_end_time_temp=eheader.event_end_time;
+	      
+	      pulser_on_off=eheader.pulser_on_off;
+	      ge_on_off=eheader.ge_on_off;
+	      random_trig_on_off=eheader.random_trig_on_off;
+	      /*
+	      event_TI=eheader.event_start_time3-last_event_time; 
+	      last_event_time=eheader.event_start_time3;
+
+	      if(random_trig_on_off==1)
+		{ RT_TI=(event_start_time_temp3-last_RT_time)*20*0.000000001; 
+		  last_RT_time=event_start_time_temp3;
+		}
+	      else
+		{ RT_TI=100; }
+	       
+	      for(Int_t v=0;v<16;v++) 
+		{
+		  veto_tdc_temp[v]=eheader.event_start_time1-eheader.veto_tdc[v];
+		  former_veto_tdc_temp[v]=eheader.event_start_time1-eheader.former_veto_tdc[v];
+		  late_former_veto_tdc_temp[v]=eheader.event_start_time1-eheader.late_former_veto_tdc[v];
+		  late_former_veto_tdc2_temp[v]=eheader.event_start_time1-eheader.late_former_veto_tdc2[v];
+		}
+	      for(Int_t v=16;v<24;v++) 
+		{
+		  veto_tdc_temp[v]=eheader.event_start_time2-eheader.veto_tdc[v];
+		  former_veto_tdc_temp[v]=eheader.event_start_time2-eheader.former_veto_tdc[v];
+		  late_former_veto_tdc_temp[v]=eheader.event_start_time2-eheader.late_former_veto_tdc[v];
+		  late_former_veto_tdc2_temp[v]=eheader.event_start_time2-eheader.late_former_veto_tdc2[v];
+            
+		}
+	      for(Int_t v=24;v<32;v++) 
+		{
+		  veto_tdc_temp[v]=eheader.event_start_time3-eheader.veto_tdc[v];
+		  former_veto_tdc_temp[v]=eheader.event_start_time3-eheader.former_veto_tdc[v];
+		  late_former_veto_tdc_temp[v]=eheader.event_start_time3-eheader.late_former_veto_tdc[v];
+		  late_former_veto_tdc2_temp[v]=eheader.event_start_time3-eheader.late_former_veto_tdc2[v];
+		}
+
+	      // OR Logic Part
+	      for(Int_t v=0;v<8;v++)
+		{ 
+		  veto_tdc_or_temp[v]=eheader.event_start_time2-eheader.veto_tdc_or[v];
+		  former_veto_tdc_or_temp[v]=eheader.event_start_time2-eheader.former_veto_tdc_or[v];
+		  late_former_veto_tdc_or_temp[v]=eheader.event_start_time2-eheader.late_former_veto_tdc_or[v];
+		  late_former_veto_tdc2_or_temp[v]=eheader.event_start_time2-eheader.late_former_veto_tdc2_or[v];
+		}
+
+	      for(Int_t v=8;v<12;v++)
+		{ 
+		  veto_tdc_or_temp[v]=eheader.event_start_time3-eheader.veto_tdc_or[v];
+		  former_veto_tdc_or_temp[v]=eheader.event_start_time3-eheader.former_veto_tdc_or[v];
+		  late_former_veto_tdc_or_temp[v]=eheader.event_start_time3-eheader.late_former_veto_tdc_or[v];
+		  late_former_veto_tdc2_or_temp[v]=eheader.event_start_time3-eheader.late_former_veto_tdc2_or[v];
+		}
+	      // OR Logic Part End
+
+	      // Inner Veto
+	      veto_tdc_inner_temp[0]=eheader.event_start_time3-eheader.veto_tdc_or[12];
+	      veto_tdc_inner_temp[1]=eheader.event_start_time3-eheader.former_veto_tdc_or[12];
+	      veto_tdc_inner_temp[2]=eheader.event_start_time3-eheader.late_former_veto_tdc_or[12];
+	      veto_tdc_inner_temp[3]=eheader.event_start_time3-eheader.late_former_veto_tdc2_or[12];
+	      // Inner Veto End
+          
+	      // MINs Part
+	      for(Int_t v=0;v<16;v++)
+		{ MINs_temp[v]=eheader.mins_OV[v]; }
+	      for(Int_t v=16;v<24;v++)
+		{ MINs_temp[v]=eheader.mins_OV2[v]; }
+	      // MINs Part End
+	 
+	      for(Int_t v=0;v<8;v++)
+		{ signal_inhibit_time_temp[v]=eheader.signal_inhibit_time[v]; }
+	      */
+	      ebody.read_ebody(raw);
+	      ebody.nt_variables_60m(random_trig_on_off);
+	      ebody.nt_variables_200m1(); 
+	      ebody.nt_variables_200m2();
+	      //ebody.nt_variables_20m1();
+	      //ebody.nt_variables_20m2();
+	      ebody.fit_variable_200m();
+	      //ebody.trapez_filter_200m();
+	      //ebody.fftw_variable_60m();
+	      //ebody.fftw_variable_200m();
+	      t1.Fill(); 
+	      temp_idevt++; 
+	 
+	    } // end of BLOCK LOOP
+	}
+      runtime = time (NULL);
+      printf(" \t This run took - %.2lf minutes to complete\n",(runtime-runtime0)/60.0);
+      fclose(raw);
+    } // end of RUN LOOP
+
+  t1.Write();
+
+} 

@@ -1,0 +1,41 @@
+
+void final_spec()
+{ 
+
+  char fname[100];
+  sprintf(fname,"/RAID_1/L114_ntupe_20180403/txn_maketree_L114/190627_1828_Ba_Gain20_FADC_RAW_Data_1_10.root");
+  // printf("\nopen....%s date %d\n",rootfile_name[n],file_date[n]);
+  TFile *fin=new TFile(fname);
+    
+  TTree *tr=(TTree*)fin->Get("tr");
+ 
+ 
+  TCut gran = Form("random_trig_on_off==1");  
+  TCut garan = Form("random_trig_on_off==0"); 
+
+  TCut os60m_ch0_cut = Form("max_60m[0]<32750");
+
+  TCut min60m_ch0_cut =  Form("min_60m[0]>-250.0 && min_60m[0]<-200.0");  
+  TCut ped60m_ch0_cut =  Form("ped_60m[0]>-220.0 && ped_60m[0]<-160.0");  
+  TCut pedt60m_ch0_cut =  Form("pedt_60m[0]>-250 && pedt_60m[0]<100.0"); 
+  TCut ped_diff60m_ch0_cut = Form("(ped_60m[0]-pedt_60m[0])>-200&&(ped_60m[0]-pedt_60m[0])<100");
+
+  TCut offset_cut;
+
+  offset_cut = os60m_ch0_cut&&min60m_ch0_cut&&ped60m_ch0_cut&&pedt60m_ch0_cut&&ped_diff60m_ch0_cut;
+
+
+  TH1F *clbr_max_he = new TH1F("clbr_max_he","",1800,0,1800);
+  tr->Project("clbr_max_he","5.28229786e-02*max_60m[0]+8.86239034e+00",garan);//
+  clbr_max_he->SetLineColor(4);
+
+  char fout_name[100];
+  sprintf(fout_name,"for_fit/190627_small_run_final_calib_max_he.root");
+
+  TFile *fout=new TFile(fout_name,"recreate");
+
+
+  clbr_max_he->Write();
+  fout->Close();
+
+}
