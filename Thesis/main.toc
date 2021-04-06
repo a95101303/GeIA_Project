@@ -1,0 +1,38 @@
+\contentsline {chapter}{\numberline {1}An Introduction to our Dark Universe}{13}%
+\contentsline {section}{\numberline {1.1}Introduction}{13}%
+\contentsline {chapter}{\numberline {2}Introduction for TEXONO experiments}{15}%
+\contentsline {section}{\numberline {2.1}Data Preparation: L/M shells X-ray subtraction}{15}%
+\contentsline {section}{\numberline {2.2}Earth Attenuation Model}{16}%
+\contentsline {chapter}{\numberline {3}Analysis Strategies}{19}%
+\contentsline {section}{\numberline {3.1}Introduction}{19}%
+\contentsline {section}{\numberline {3.2}Definition Clarifications}{20}%
+\contentsline {subsection}{\numberline {3.2.1}Vacuum Case\&Earth Effect Case}{20}%
+\contentsline {subsection}{\numberline {3.2.2}Trajectory for WIMPs: S-mode\&B-mode}{20}%
+\contentsline {section}{\numberline {3.3}Core: The loop for An Interaction}{21}%
+\contentsline {section}{\numberline {3.4}Three Types of Interacting channels in the Detector}{22}%
+\contentsline {subsection}{\numberline {3.4.1}$\chi -N$ Scattering}{22}%
+\contentsline {subsection}{\numberline {3.4.2}Migdal Effect}{23}%
+\contentsline {subsection}{\numberline {3.4.3}Bremsstrahlung}{24}%
+\contentsline {section}{\numberline {3.5}Battleground for WIMPs: Exclusion Plot}{24}%
+\contentsline {section}{\numberline {3.6}Vacuum-constrained limits on WIMPs}{25}%
+\contentsline {subsection}{\numberline {3.6.1}Concept of Setting limits with Data}{25}%
+\contentsline {subsection}{\numberline {3.6.2}Exemplars for cases}{26}%
+\contentsline {subsection}{\numberline {3.6.3}Exclusion plot for WIMPs}{27}%
+\contentsline {chapter}{\numberline {4}Method-I: Count-based Approach on Constraint for WIMP}{29}%
+\contentsline {section}{\numberline {4.1}Introduction to the method}{29}%
+\contentsline {section}{\numberline {4.2}Three-stage blockage for earth effect}{31}%
+\contentsline {subsection}{\numberline {4.2.1}Introduction to each stage}{31}%
+\contentsline {subsection}{\numberline {4.2.2}Velocity distributions}{32}%
+\contentsline {subsection}{\numberline {4.2.3}Recoil Spectrums}{33}%
+\contentsline {subsection}{\numberline {4.2.4}Sensitivity Line for Quantifying the earth effect}{34}%
+\contentsline {section}{\numberline {4.3}Earth-constrained limits on WIMPs}{37}%
+\contentsline {section}{\numberline {4.4}Conclusion}{38}%
+\contentsline {chapter}{\numberline {5}Method-II: Movement-based Approach on Constraint for WIMP}{39}%
+\contentsline {section}{\numberline {5.1}Introduction to the method}{39}%
+\contentsline {section}{\numberline {5.2}Two-case movement}{42}%
+\contentsline {subsection}{\numberline {5.2.1}S-mode case}{42}%
+\contentsline {subsection}{\numberline {5.2.2}B-mode case}{42}%
+\contentsline {chapter}{\numberline {6}Conclusion for Our Analysis}{45}%
+\contentsline {chapter}{\numberline {7}Extension:Low-threshold detector development}{47}%
+\contentsline {chapter}{\numberline {A}Tables}{49}%
+\contentsline {chapter}{\numberline {B}Figures}{51}%

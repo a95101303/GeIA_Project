@@ -1,0 +1,42 @@
+%% This is an example first chapter.  You should put chapter/appendix that you
+%% write into a separate file, and add a line \include{yourfilename} to
+%% main.tex, where `yourfilename.tex' is the name of the chapter/appendix file.
+%% You can process specific files by typing their names in at the 
+%% \files=
+%% prompt when you run the file main.tex through LaTeX.
+\chapter{Introduction for TEXONO experiments}
+
+\section{Data Preparation: L/M shells X-ray subtraction}
+After the raw data is obtained with some primary calibrations, the next step will be the subtraction of the K/L shells X-ray contributions. Since several characteristic K shell X-ray peaks from internal cosmogenic radioactive isotopes can be recognized in the data, and the ratios of the K-shell to L-shell X-ray events, which is well-predicted with the great agreement of the measurement as written in Ref. [12], can be employed to get the intensity of the L-shell X-rays in the lower energy ranges (<1.6 keVee). The process is as follows:
+\begin{enumerate}
+	\item In Figure\ref{}, the peaks for five isotopes, including $Ge^{68}$, $Ga^{68}$, $Zn^{65}$, $Fe^{55}$, $V^{49}$, can be identified clearly with some of the gaussian fits. \\
+	
+        \begin{figure}[h]
+        \includegraphics[scale=0.6]{/Users/yehchihhsiang/Desktop/Analysis/CDEX_Analysis_method/Codes/Thesis_Plot/MLshells_Subtraction/Resolution_Plot1.pdf}
+        \centering
+        \caption{The process of an interaction for a WIMP with an atom.} \label{Interaction}
+        \end{figure}
+        
+	\item In the paper\ref{}, the ratios of the K-shell to L-shell X-ray events are well-measured.  As the event number is calculated by the integral of the gaussians, the following formula is used in the calculation:\\
+	\begin{equation}
+        \label{Gaussian Area}
+        Area  = a \times c \times \sqrt{2 \pi} 
+        \end{equation}
+        a is the constant of the gaussian, and c is the uncertainty of the gaussian.
+        	\item With the number of the transformation, the event number from L shells can be inferred by the scaling factor given in the \ref{}. In the end, the gaussian can be fitted at the energies of L shells with the known event numbers. In Figure\ref{}, the gaussians for five isotopes can be recognized. In the end, the subtraction can be completed, as the pink points drawn in the plot. \\
+        \begin{figure}[h]
+        \includegraphics[scale=0.6]{/Users/yehchihhsiang/Desktop/Analysis/CDEX_Analysis_method/Codes/Thesis_Plot/MLshells_Subtraction/Resolution_Plot2.pdf}
+        \centering
+        \caption{The process of an interaction for a WIMP with an atom.} \label{Interaction}
+        \end{figure}
+
+\section{Earth Attenuation Model}
+Because of the environment, which incloses the detector, can let WIMPs loss the energies on their ways to the detector, furthermore, when the energies of WIMPs are lower than the triggering energy of the detector, the experiment would not be allowed to explore WIMPs above the critical energy loss, at this particular point, the densities for the material of the environment should be well-recognized for calculating the energy loss of WIMPs exactly. Three models, which are utilized in our analysis, are described as follows:
+
+\begin{enumerate}
+	\item Inner-Earth Model: Based on the research of using P and S waves to predict the densities of the inner-earth structure, the "Preliminary Reference Earth Model"(PREM) is established as written in the reference\cite{}.  In Fig.\ref{}, it visualizes the densities of the inner-earth structure applied to our analysis. 
+	\item Atmospheric Model: Based on the theoretical calculation, "The 1976 U.S. Standard Atmosphere"\cite{}, which is the most popular model for describing the atmosphere, is adopted as our atmospheric model as visualized in Fig.\ref{}.
+	\item Shielding Model: Two parts of the shielding that are taken into account. The first part is the passive shielding layers, that are 5 cm of copper, 25 cm of boron-loaded polyethylene, 5 cm of steel, and 15 cm of lead consecutively from inside out. Another part is the structure of the building around the detector. In our analysis, 1 m of wall, 10 m of ceiling (30 meter-water-equivalent thickness), and the reactor with 28 m radius nearby the detector are consider precisely. 
+
+\end{enumerate}
+
